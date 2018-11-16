@@ -15,14 +15,6 @@ PS1=""
 
 conda activate merge_VCF
 
-pwd
-time python mergeVCF.py \
-        -a $ARCHAIC_VCF \
-        -o $OUTPUT_FILE \
-        <indexed.vcf.gz
-
-exit
-
 time tabix -h $INPUT_GZ_FILE $TABIX_RANGE |\
     python mergeVCF.py \
         -a $ARCHAIC_VCF \

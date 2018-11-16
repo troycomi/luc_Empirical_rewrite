@@ -1,6 +1,5 @@
 from optparse import OptionParser
 import sys
-import cProfile
 
 
 # class for returning parsed lines.
@@ -166,4 +165,4 @@ def discardToChar(stream, char):
 
 
 if __name__ == "__main__":
-    cProfile.run("main()")
+    main()
