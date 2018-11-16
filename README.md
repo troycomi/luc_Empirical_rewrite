@@ -10,8 +10,10 @@ no diff between outputs.
 On the Princeton University Della cluster, you must first create the conda
 environment for package management.  After cloning to the source directory:
 
-`module load anaconda3`
-`conda env create --file environment.yml`
+```
+module load anaconda3
+conda env create --file environment.yml
+```
 
 ## Usage
 Change the variables in `submit.sh` to the required input and output files.

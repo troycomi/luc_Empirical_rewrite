@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#SBATCH --time 1:00:00
-#SBATCH --mem=4G
+#SBATCH --time 8:00:00
+#SBATCH --mem=1G
+#SBATCH --cpus-per-task=1
 
 set -euox pipefail
 date +%F" "%T
@@ -15,8 +16,17 @@ PS1=""
 conda activate merge_VCF
 
 pwd
+time python mergeVCF.py \
+        -a $ARCHAIC_VCF \
+        -o $OUTPUT_FILE \
+        <indexed.vcf.gz
+
+exit
 
 time tabix -h $INPUT_GZ_FILE $TABIX_RANGE |\
     python mergeVCF.py \
         -a $ARCHAIC_VCF \
         -o $OUTPUT_FILE
+
+date +%F" "%T
+echo done
