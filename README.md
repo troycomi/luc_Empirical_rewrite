@@ -12,7 +12,7 @@ environment for package management.  After cloning to the source directory:
 
 ```
 module load anaconda3
-conda env create --file environment.yml
+conda create --name test_import --file environment.txt
 ```
 
 ## Usage
