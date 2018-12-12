@@ -22,22 +22,41 @@ int simpCharPar(const char c);
 int main(int argc, char *argv[]){
     ulnt position;
     int c;
+    int refpos = 3;
+    int altpos = 4;
     std::ifstream input;
-    std::ofstream output;
+    std::streambuf *buf;
+    std::ofstream of;
     std::string inputLine, stdinLine;
     bool suppress = false;
+    bool textInput = false;
+    bool outputSet = false;
     
     //read in arguments
     while ((c = getopt(argc, argv, "a:o:s:")) != -1) {
         switch (c) {
             case 'a': input.open(optarg); break; // Archaic vcf from step 1
-            case 'o': output.open(optarg); break; // The output file
-            case 's': suppress = (optarg[0] == 'y'); break;
+            case 'o':
+                outputSet = true;
+                of.open(optarg);
+                buf = of.rdbuf();
+                break;
+            case 's': 
+                suppress = (optarg[0] == 'y' || optarg[0] == 't');
+                textInput = (optarg[0] == 't');
+                break;
         }
     }
-    
-    if(suppress == true)
-        std::cout << "suppress set\n";
+
+    if(outputSet == false)
+        buf = std::cout.rdbuf();
+    std::ostream output(buf);
+
+    if(textInput == true){
+        refpos = 2;
+        altpos = 3;
+    }
+
     bool recheck = false;
     //for each line in stdin
     while(std::getline(std::cin, stdinLine)){
@@ -54,14 +73,15 @@ int main(int argc, char *argv[]){
                 continue;
 
             std::vector<std::string> inputToks = split(inputLine, '\t');
-            //
+
             // skip lines with multiple ref or alt nucleotides
-            if(inputToks[3].length() > 1 || inputToks[4].length() > 1)
+            if(inputToks[refpos].length() > 1 || inputToks[altpos].length() > 1)
                 continue;
 
             //less than position, copy all, skip if suppressing
             if(stoi(inputToks[1]) < stoi(stdToks[1]))
             {
+                //always suppress with text input!
                 if(suppress == true)
                     continue;
                 bool nonzero = false;
@@ -95,19 +115,23 @@ int main(int argc, char *argv[]){
             //equal, have to check other conditions to write
             else if(stoi(inputToks[1]) == stoi(stdToks[1]))
             {
-                if (stdToks[3].compare(inputToks[3]) == 0 &&
+                if (stdToks[3].compare(inputToks[refpos]) == 0 &&
                         stdToks[4].length() == 1 &&
-                        (inputToks[4][0] == '.' ||
-                         inputToks[4].compare(stdToks[4]) == 0))
+                        (inputToks[altpos][0] == '.' ||
+                         inputToks[altpos].compare(stdToks[4]) == 0))
                 {
                     output << inputToks[0] << "\t";
                     output << inputToks[1] << "\t";
-                    output << inputToks[3] << "\t";
+                    output << inputToks[refpos] << "\t";
                     output << stdToks[4] << "\t";
                     
-                    for(int i = 9; i < inputToks.size(); i++)
-                        output << (simpCharPar(inputToks[i][0]) +
-                                    simpCharPar(inputToks[i][2])) << "\t";
+                    if(textInput)
+                        for(int i = 4; i < inputToks.size(); i++)
+                            output << inputToks[i] << "\t";
+                    else
+                        for(int i = 9; i < inputToks.size(); i++)
+                            output << (simpCharPar(inputToks[i][0]) +
+                                        simpCharPar(inputToks[i][2])) << "\t";
 
                     //fill for stdin 
                     for(int i = 9; i < stdToks.size(); i++)
@@ -128,7 +152,9 @@ int main(int argc, char *argv[]){
     }
     
     input.close();
-    output.close();
+    output.flush();
+    if(outputSet == true)
+        of.close();
 
     return 0;
 }
