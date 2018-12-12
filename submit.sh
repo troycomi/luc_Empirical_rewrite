@@ -10,7 +10,9 @@ SLURM_OUT=slurm_out
 export INPUT_GZ_FILE=ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
 export TABIX_RANGE=1:1-250000000
 export ARCHAIC_VCF=Altai_chr1_new.recode.vcf
-export OUTPUT_FILE=Altainew_1KGP3_chr1_cpp.txt
+export OUTPUT_FILE=Altainew_1KGP3_chr1_new.txt
+# comment out suppress to write all lines
+export SUPPRESS_LESS_THAN=YES
 
 [[ -d $SLURM_OUT ]] || mkdir -p $SLURM_OUT
 

@@ -26,6 +26,9 @@ g++ -std=c++11 mergeVCF.cpp -o mergeVCF
 Change the variables for input and output files 
 in `submit.sh` to the required input and output files.
 
+The variable `SUPPRESS_LESS_THAN` is true if it is defined.  If all the rows
+are required comment out the export statement.
+
 Submit to the slurm job manager by calling `./submit.sh`
 
 The choice of running the python or C++ version is made by 

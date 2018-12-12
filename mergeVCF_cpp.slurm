@@ -11,6 +11,7 @@ module load samtools
 
 time tabix -h $INPUT_GZ_FILE $TABIX_RANGE |\
     ./mergeVCF2 \
+        ${SUPPRESS_LESS_THAN:+-s yes} \
         -a $ARCHAIC_VCF \
         -o $OUTPUT_FILE
 

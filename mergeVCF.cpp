@@ -20,20 +20,24 @@ std::vector<std::string> split(const std::string& s, char seperator);
 int simpCharPar(const char c);
 
 int main(int argc, char *argv[]){
-	ulnt position;
+    ulnt position;
     int c;
-	std::ifstream input;
+    std::ifstream input;
     std::ofstream output;
     std::string inputLine, stdinLine;
-	
+    bool suppress = false;
+    
     //read in arguments
-	while ((c = getopt(argc, argv, "a:o:")) >= 0) {
-		switch (c) {
+    while ((c = getopt(argc, argv, "a:o:s:")) != -1) {
+        switch (c) {
             case 'a': input.open(optarg); break; // Archaic vcf from step 1
-			case 'o': output.open(optarg); break; // The output file
-		}
-	}
-	
+            case 'o': output.open(optarg); break; // The output file
+            case 's': suppress = (optarg[0] == 'y'); break;
+        }
+    }
+    
+    if(suppress == true)
+        std::cout << "suppress set\n";
     bool recheck = false;
     //for each line in stdin
     while(std::getline(std::cin, stdinLine)){
@@ -55,9 +59,11 @@ int main(int argc, char *argv[]){
             if(inputToks[3].length() > 1 || inputToks[4].length() > 1)
                 continue;
 
-            //less than position, copy all
+            //less than position, copy all, skip if suppressing
             if(stoi(inputToks[1]) < stoi(stdToks[1]))
             {
+                if(suppress == true)
+                    continue;
                 bool nonzero = false;
                 for(int i = 9; i < inputToks.size(); i++)
                     if(simpCharPar(inputToks[i][0]) +
@@ -120,11 +126,11 @@ int main(int argc, char *argv[]){
             }
         }
     }
-	
+    
     input.close();
     output.close();
 
-	return 0;
+    return 0;
 }
 
 std::vector<std::string> split(const std::string& s, char seperator)
