@@ -80,6 +80,22 @@ int main(int argc, char *argv[]){
             if(inputToks[refpos].length() > 1 || inputToks[altpos].length() > 1)
                 continue;
 
+            // skip lines with ./. in each entry
+            if(!textInput){
+                bool noneFound = true;
+                for(int i = 9; i < inputToks.size(); i++){
+                    int gt = simpCharPar(inputToks[i][0]) +
+                        simpCharPar(inputToks[i][2]);
+                    if(gt <= 2){ //valid entry
+                        noneFound = false;
+                        break;
+                    }
+                }
+
+                if(noneFound)
+                    continue;
+            }
+
             //less than position, copy all, skip if suppressing
             if(stoi(inputToks[1]) < stoi(stdToks[1]))
             {
@@ -127,7 +143,7 @@ int main(int argc, char *argv[]){
                     output << inputToks[refpos] << "\t";
                     output << stdToks[4] << "\t";
                     
-                    //note the -1 is due to the text output having and extra
+                    //note the -1 is due to the text output having an extra
                     //tab character at the end
                     if(textInput)
                         for(int i = 4; i < inputToks.size()-1; i++)
@@ -138,14 +154,17 @@ int main(int argc, char *argv[]){
                                         simpCharPar(inputToks[i][2])) << "\t";
 
                     //fill for stdin 
-                    for(int i = 9; i < stdToks.size(); i++)
-                        output << (simpCharPar(stdToks[i][0]) +
-                                    simpCharPar(stdToks[i][2])) << "\t";
+                    for(int i = 9; i < stdToks.size(); i++){
+                        int gt = simpCharPar(stdToks[i][0]) +
+                                    simpCharPar(stdToks[i][2]);
+                        output << (gt <= 2 ? gt : 9) << "\t";
+                    }
 
                     output << "\n";
                     break;
                 }
-
+                // advance VCF to match legacy version
+                break;
             }
             else
             {
@@ -186,4 +205,5 @@ int simpCharPar(const char c)
         case('1'): return 1;
         case('0'): return 0;
     }
+    return 9;
 }
