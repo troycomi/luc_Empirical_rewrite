@@ -11,12 +11,12 @@ module load samtools
 
 time \
     tabix -h $INPUT_GZ_FILE2 $TABIX_RANGE |\
-        ./mergeVCF2 \
+        ./mergeVCF \
             -s three \
             -o $OUTPUT_FILE \
             -a <(\
                 tabix -h $INPUT_GZ_FILE1 $TABIX_RANGE |\
-                    ./mergeVCF2 \
+                    ./mergeVCF \
                         -s yes \
                         -a $ARCHAIC_VCF \
                         )
