@@ -48,10 +48,12 @@ int main(int argc, char *argv[]){
         }
     }
 
+    //output to provided buffer or stdout
     if(outputSet == false)
         buf = std::cout.rdbuf();
     std::ostream output(buf);
 
+    //remap the reference and alternate positions if text is provided
     if(textInput == true){
         refpos = 2;
         altpos = 3;
@@ -125,8 +127,10 @@ int main(int argc, char *argv[]){
                     output << inputToks[refpos] << "\t";
                     output << stdToks[4] << "\t";
                     
+                    //note the -1 is due to the text output having and extra
+                    //tab character at the end
                     if(textInput)
-                        for(int i = 4; i < inputToks.size(); i++)
+                        for(int i = 4; i < inputToks.size()-1; i++)
                             output << inputToks[i] << "\t";
                     else
                         for(int i = 9; i < inputToks.size(); i++)
